@@ -4,6 +4,8 @@ import { Entity, Column, OneToMany } from 'typeorm';
 import { Default } from './default.entity';
 import { User } from './user.entity';
 
+export type AccountType = 'personal' | 'business' | 'enterprise';
+
 @Entity('Account')
 export class Account extends Default {
   @Column({ unique: true })
@@ -14,7 +16,7 @@ export class Account extends Default {
     enum: ['personal', 'business', 'enterprise'],
     default: 'personal',
   })
-  type!: string;
+  type!: AccountType;
 
   @OneToMany(
     type => User,
