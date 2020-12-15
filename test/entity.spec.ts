@@ -39,16 +39,29 @@ describe('EntityTest', () => {
   it('should create a user', async () => {
     const stub = {
       email: 'test@domain.com',
-      account: account.create({name: 'test'})
-    }
-    stub.account = await account.save(stub.account)
+      account: account.create({ name: 'test' }),
+    };
+    stub.account = await account.save(stub.account);
 
-    const usr = user.create(stub)
-    expect(usr).toBeDefined()
+    const usr = user.create(stub);
+    expect(usr).toBeDefined();
 
-    const result = await user.save(usr)
-    expect(result).toBeDefined()
-    expect(result).toHaveProperty('id')
-    expect(result.account).toEqual(stub.account)
-  })
+    const result = await user.save(usr);
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty('id');
+    expect(result.account).toEqual(stub.account);
+  });
+
+  it('should find a user by email', async () => {
+    const stub = {
+      email: 'test@domain.com',
+      account: await account.save(account.create({ name: 'test' })),
+    };
+    const usr = await user.save(user.create(stub));
+    expect(usr).toBeDefined();
+
+    const found = await user.findOneOrFail({email: usr.email})
+    expect(found).toBeDefined()
+    expect(found.id).toEqual(usr.id)
+  });
 });
