@@ -2,7 +2,7 @@ import { Connection, Repository } from 'typeorm';
 
 import { TempDB } from './test.db';
 import { Account, AccountType } from '../src/entities/account.entity';
-import { User } from '../src/entities/user.entity';
+import { User, UserRoles } from '../src/entities/user.entity';
 
 describe('EntityTest', () => {
   let connection: Connection;
@@ -40,6 +40,7 @@ describe('EntityTest', () => {
     const stub = {
       email: 'test@domain.com',
       account: account.create({ name: 'test' }),
+      roles: ['SIGNER'] as UserRoles[],
     };
     stub.account = await account.save(stub.account);
 
@@ -56,11 +57,15 @@ describe('EntityTest', () => {
     const stub = {
       email: 'test@domain.com',
       account: await account.save(account.create({ name: 'test' })),
+      roles: ['SIGNER'] as UserRoles[],
     };
     const usr = await user.save(user.create(stub));
     expect(usr).toBeDefined();
 
-    const found = await user.findOneOrFail({email: usr.email})
+    const found = await user.findOne({ where: {email: usr.email}})
+
+    console.log("found", found)
+
     expect(found).toBeDefined()
     expect(found.id).toEqual(usr.id)
   });
